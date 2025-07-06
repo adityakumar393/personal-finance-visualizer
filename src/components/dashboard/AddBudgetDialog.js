@@ -13,10 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import BudgetForm from "@/components/forms/BudgetForm";
 
-/**
- * Opens a dialog with BudgetForm in “add” mode.
- * @param {{ defaultMonth?: string }} props
- */
 export default function AddBudgetDialog({ defaultMonth }) {
   const [open, setOpen] = useState(false);
 
@@ -34,8 +30,10 @@ export default function AddBudgetDialog({ defaultMonth }) {
           </DialogDescription>
         </DialogHeader>
 
-        {/* BudgetForm handles its own mutations and closes the dialog via onClose */}
-        <BudgetForm defaultMonth={defaultMonth} onClose={() => setOpen(false)} />
+        <BudgetForm
+          defaultMonth={defaultMonth}
+          onClose={() => setOpen(false)}
+        />
       </DialogContent>
     </Dialog>
   );
