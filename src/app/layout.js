@@ -1,8 +1,9 @@
+// src/app/layout.js
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
+import { AuthProvider } from "@/contexts/AuthContext";
 
-// Google-fonts → CSS variables
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
@@ -17,11 +18,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
-        {/* top nav */}
-        <Navbar />
+        {/* 👉 AuthProvider wraps *everything* that might call useUser */}
+        <AuthProvider>
+          <Navbar />
 
-        {/* page content */}
-        <main className="container mx-auto p-4">{children}</main>
+          <main className="container mx-auto p-4">{children}</main>
+        </AuthProvider>
       </body>
     </html>
   );

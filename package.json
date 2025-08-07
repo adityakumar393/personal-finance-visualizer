@@ -15,6 +15,8 @@
     "@radix-ui/react-slot": "^1.2.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "firebase": "^12.0.0",
+    "firebase-admin": "^13.4.0",
     "lucide-react": "^0.525.0",
     "mongodb": "^6.17.0",
     "next": "15.3.5",
