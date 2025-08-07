@@ -1,15 +1,14 @@
-// src/components/TransactionTable.js
 "use client";
-
+import { useState } from "react";
 import useTransactions from "@/hooks/useTransactions";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 export default function TransactionTable({ limit }) {
   const { transactions, isLoading, mutate } = useTransactions();
   const [error, setError] = useState(null);
 
   if (isLoading) return <p>Loading…</p>;
+  if (!transactions.length) return <p>No transactions yet.</p>;
 
   // newest → oldest
   let rows = [...transactions].sort(
@@ -17,17 +16,14 @@ export default function TransactionTable({ limit }) {
   );
   if (limit) rows = rows.slice(0, limit);
 
-  if (!rows.length) return <p>No transactions yet.</p>;
-
   async function handleDelete(id) {
-    // optimistic update
     const previous = transactions;
-    mutate(transactions.filter((t) => t._id !== id), false);
+    mutate(transactions.filter((t) => t._id === id ? false : true), false);
 
     try {
       const res = await fetch(`/api/transactions/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Delete failed");
-      await mutate(); // re-validate
+      await mutate();          // revalidate from server
     } catch (err) {
       setError(err.message);
       mutate(previous, false); // rollback
