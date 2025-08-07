@@ -1,27 +1,29 @@
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { adminAuth } from "@/lib/firebaseAdmin";
 
-/* ── create / refresh session cookie ───────── */
+const COOKIE_OPTS = {
+  httpOnly: true,
+  path: "/",
+  maxAge: 60 * 60 * 24 * 7,           // 7 days
+  secure: process.env.NODE_ENV === "production",
+};
+
 export async function POST(req) {
   const { token } = await req.json();
   const decoded = await adminAuth.verifyIdToken(token);
 
-  const cookieStore = await cookies();
-  cookieStore.set("idToken", token, {
-    httpOnly: true,
-    path: "/",
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-  });
-  cookieStore.set("uid", decoded.uid, { httpOnly: true, path: "/" });
+  /* create response FIRST, then attach cookies to it */
+  const res = NextResponse.json({ ok: true });
 
-  return NextResponse.json({ ok: true });
+  res.cookies.set("idToken", token, COOKIE_OPTS);
+  res.cookies.set("uid", decoded.uid, COOKIE_OPTS);
+
+  return res;
 }
 
-/* ── destroy session ───────────────────────── */
 export async function DELETE() {
-  const cookieStore = await cookies();
-  cookieStore.delete("idToken");
-  cookieStore.delete("uid");
-  return NextResponse.json({ ok: true });
+  const res = NextResponse.json({ ok: true });
+  res.cookies.delete("idToken", { path: "/" });
+  res.cookies.delete("uid", { path: "/" });
+  return res;
 }
